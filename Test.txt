@@ -1,0 +1,199 @@
+gcloud --version
+gcloud init
+(Look for 4 important properties--->Compute- region,zone, core-account and Project ID)
+
+gcloud config list project
+gcloud config configurations list
+gcloud config configurations activate my-default-configuration
+gcloud config list
+gcloud config configurations describe my-second-configuration
+gcloud compute instances list
+gcloud compute instances create
+gcloud compute instances create my-first-instance-from-gcloud
+gcloud compute instances describe my-first-instance-from-gcloud
+gcloud compute instances delete my-first-instance-from-gcloud
+gcloud compute zones list
+gcloud compute regions list
+gcloud compute machine-types list
+ 
+gcloud compute machine-types list --filter zone:asia-southeast2-b
+gcloud compute machine-types list --filter "zone:(asia-southeast2-b asia-southeast2-c)"
+gcloud compute zones list --filter=region:us-west2
+gcloud compute zones list --sort-by=region
+gcloud compute zones list --sort-by=~region
+gcloud compute zones list --uri
+gcloud compute regions describe us-west4
+ 
+gcloud compute instance-templates list
+gcloud compute instance-templates create instance-template-from-command-line
+gcloud compute instance-templates delete instance-template-from-command-line
+gcloud compute instance-templates describe my-instance-template-with-custom-image
+
+    gcloud config set
+
+Syntax:- gcloud config set section/property value
+--core is the default option
+
+--HELP
+gcloud config set --help
+gcloud config list --help
+gcloud config --help
+
+(:q to quit from help page)
+	
+gcloud config set core/project VALUE
+gcloud config set core/account VALUE
+gcloud config set compute/region VALUE
+gcloud config set compute/zone VALUE
+gcloud config set core/verbosity VALUE(debug)
+
+
+---To UNSET properties---
+gcloud config unset project
+gcloud config unset compute/region
+
+
+Managing multiple configurations in gcloud
+
+gcloud config configurations list ---Displays configuration details.
+
+gcloud config configurations create/list/delete/activate/describe   VALUE
+
+-create command creates & activates the configuration.
+
+Gcloud command structure---Syntax
+
+gcloud GROUP SUBGROUP ACTION
+
+e.g 
+1)gcloud compute instances create/list/delete/start/stop VALUE
+
+2) gcloud compute instances create my-instance1-from-gcloud
+3) gcloud compute instances list
+4)gcloud compute instances describe my-instance1-from-gcloud  (To get info about instance details)
+5)gcloud compute regions list
+6)gcloud compute zones list
+7)gcloud compute machine-types list
+
+Playing with Gcloud compute instane create option
+
+---gcloud compute instane create (google it for all options for this command)
+
+Setting default region & zone for compute engine
+
+Option 1:- (Centralized configuration): gcloud compute project-info add-metadata
+Option 2:- (Local gcloud confg):- gcloud congfig set compute/region REGION
+Option 3:- (Command specific): --zone or --region in the command
+
+*Priority: Option-3(if exists) overrides option-2(if exists) overrides option-1
+
+ List and Describe commands
+
+---gcloud compute RESOURCES list
+
+*Most list commands support a few common options
+ 1) --filter="zone:VALUE"
+ 2) --sort-by(NAME--asc order , ~NAME- descending order)
+ 3) --uri
+ 
+***MANAGED INSTANCES GROUP(MIG)
+
+gcloud compute instances create my-test-vm --source-instance-template=my-instance-template-with-custom-image
+gcloud compute instance-groups managed list
+gcloud compute instance-groups managed delete my-managed-instance-group
+gcloud compute instance-groups managed create my-mig --zone us-central1-a --template my-instance-template-with-custom-image --size 1
+gcloud compute instance-groups managed set-autoscaling my-mig --max-num-replicas=2 --zone us-central1-a
+gcloud compute instance-groups managed stop-autoscaling my-mig --zone us-central1-a
+gcloud compute instance-groups managed resize my-mig --size=1 --zone=us-central1-a
+gcloud compute instance-groups managed recreate-instances my-mig --instances=my-mig-85fb --zone us-central1-a
+gcloud compute instance-groups managed delete my-managed-instance-group --region=us-central1 
+=====================================================================================================================================
+
+		***APP Engine***
+		
+cd default-service
+gcloud app deploy
+gcloud app services list
+gcloud app versions list
+gcloud app instances list
+gcloud app deploy --version=v2
+gcloud app versions list
+gcloud app browse
+gcloud app browse --version 20210215t072907
+gcloud app deploy --version=v3 --no-promote
+gcloud app browse --version v3
+gcloud app services set-traffic split=v3=.5,v2=.5
+gcloud app services set-traffic splits=v3=.5,v2=.5
+watch curl https://melodic-furnace-304906.uc.r.appspot.com/
+gcloud app services set-traffic --splits=v3=.5,v2=.5 --split-by=random
+ 
+cd ../my-first-service/
+gcloud app deploy
+gcloud app browse --service=my-first-service
+ 
+gcloud app services list
+gcloud app regions list
+ 
+gcloud app browse --service=my-first-service --version=20210215t075851
+gcloud app browse --version=v2
+gcloud app open-console --version=v2
+gcloud app versions list --hide-no-traffic
+
+=====================================================================================================================
+		***IAM ***
+		
+gcloud compute project-info describe
+gcloud auth list
+gcloud projects get-iam-policy glowing-furnace-304608
+gcloud projects add-iam-policy-binding glowing-furnace-304608 --member=user:in28minutes@gmail.com --role=roles/storage.objectAdmin
+gcloud projects remove-iam-policy-binding glowing-furnace-304608 --member=user:in28minutes@gmail.com --role=roles/storage.objectAdmin
+gcloud iam roles describe roles/storage.objectAdmin
+gcloud iam roles copy --source=roles/storage.objectAdmin --destination=my.custom.role --dest-project=glowing-furnace-304608
+
+=========================================================================================================================
+				*** Cloud SQL***
+				
+gcloud sql connect my-first-cloud-sql-instance --user=root --quiet
+gcloud config set project glowing-furnace-304608
+gcloud sql connect my-first-cloud-sql-instance --user=root --quiet
+use todos
+create table user (id integer, username varchar(30) );
+describe user;
+insert into user values (1, 'Ranga');
+select * from user;
+ 
+# Cloud Spanner
+CREATE TABLE Users (
+  UserId   INT64 NOT NULL,
+  UserName  STRING(1024)
+) PRIMARY KEY(UserId);
+ 
+ 
+# Cloud BigTable
+bq show bigquery-public-data:samples.shakespeare
+ 
+gcloud --version
+cbt listinstances -project=glowing-furnace-304608
+echo project = glowing-furnace-304608 > ~/.cbtrc
+cat ~/.cbtrc
+cbt listinstances
+		
+===================================================================================================================================
+		***PUB/SUB***
+
+gcloud config set project glowing-furnace-304608
+gcloud pubsub topics create topic-from-gcloud
+gcloud pubsub subscriptions create subscription-gcloud-1 --topic=topic-from-gcloud
+gcloud pubsub subscriptions create subscription-gcloud-2 --topic=topic-from-gcloud
+gcloud pubsub subscriptions pull subscription-gcloud-2
+gcloud pubsub subscriptions pull subscription-gcloud-1
+gcloud pubsub topics publish topic-from-gcloud --message="My First Message"
+gcloud pubsub topics publish topic-from-gcloud --message="My Second Message"
+gcloud pubsub topics publish topic-from-gcloud --message="My Third Message"
+gcloud pubsub subscriptions pull subscription-gcloud-1 --auto-ack
+gcloud pubsub subscriptions pull subscription-gcloud-2 --auto-ack
+gcloud pubsub topics list
+gcloud pubsub topics delete topic-from-gcloud
+gcloud pubsub topics list-subscriptions my-first-topic		
+		
+  Test
